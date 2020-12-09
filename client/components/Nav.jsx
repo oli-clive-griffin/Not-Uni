@@ -35,7 +35,7 @@ class Nav extends React.Component {
                   </div>
                 </Link>
                 <Link to="/login">
-                  <div className ='text' > 
+                  <div className ='text right' > 
                     <span> Login </span> 
                   </div>
                 </Link>

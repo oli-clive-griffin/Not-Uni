@@ -63,7 +63,7 @@ body{
     display: flex;
     flex: 1 1 auto;
     align-content: center;
-    margin: auto 20px;
+    margin: auto 40px;
     align-items: center;
 
     .logo-pic {
@@ -85,10 +85,17 @@ body{
     
   }
   
+  .nav-spacer {
+    width: 10px;
+    margin: 0px;
+  }
+  
   .text {
     margin-left: 0px;
     width: auto;
     justify-content: flex-end;
+    margin-right: 20px;
+
     .pokemon{
       height: 100%;
       width: auto;
@@ -96,6 +103,10 @@ body{
       border-radius: 100%;
        
     }  
+  }
+
+  .right {
+    margin-right: 40px;
   }
   
 
