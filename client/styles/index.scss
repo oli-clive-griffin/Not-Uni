@@ -3,14 +3,18 @@
 body{
   font-family: Roboto;
   letter-spacing: 0.05em;
-}
-
-.app {
   background-color: #f8f8f8;
+  margin: 0px;
 }
 
 // Nav Bar
 .top-nav {
+  position: relative;
+  position: sticky;
+  padding: 10px;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
@@ -21,6 +25,39 @@ body{
   background: rgba(252, 252, 252, 1);
   font-family: roboto;
 
+  .search-container {
+
+    position: absolute;
+    left: 28.12%;
+    right: 28.12%;
+    top: 25.84%;
+    bottom: 26.97%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    place-content: center;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      place-content: center;
+    
+      width: 100%;
+      
+      .search{
+        width: 100%;
+        align-self: center;
+        height: 42px;
+        background: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.4);
+        box-sizing: border-box;
+        padding-left: 10px;
+        border-radius: 3px;
+      }
+    }
+  }
+
   div {
     height: 100%;
     display: flex;
@@ -28,54 +65,43 @@ body{
     align-content: center;
     margin: auto 20px;
     align-items: center;
-  }
-  .text {
-    flex: 0 0 auto;
-    flex-direction: row-reverse;
-    width: 100px;
-    justify-self: right;
-  }
-  img {
-    height: 29.909408569335938px;
-    width: 74px;
-  }
-  .pokemon{
-    flex: 0 0 auto;
-    flex-direction: row-reverse;
-    // width: 100px;
-    justify-self: right;
-    // position: fixed;
-    padding-right: 5em;
-    height: auto;
-    width: auto;
-    margin-right: 60px;
-    margin-top: 2px;
-    padding-top: 0px;
-  }  
-  .search{
-    height: 42px;
-    width: 630px;
-    left: 28.12%;
-    right: 28.12%;
-    top: 25.84%;
-    bottom: 26.97%;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    box-sizing: border-box;
-    padding-left: 15px;
+
+    .logo-pic {
+      height: 35px;
+      width: auto;
+      margin-left: 12px;
     }
+  }
+
+
+  .text span {
+    text-decoration: none ;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0em;
+    color: rgba(42, 136, 27, 1);
+    
+  }
+  
+  .text {
+    margin-left: 0px;
+    width: auto;
+    justify-content: flex-end;
+    .pokemon{
+      height: 100%;
+      width: auto;
+      margin-left: 20px;
+      border-radius: 100%;
+       
+    }  
+  }
+  
+
 }
 
-.text a {
-  text-decoration: none ;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 25px;
-  letter-spacing: 0em;
-  color: rgba(42, 136, 27, 1);
-  
-}
+
 
 
 // Register
@@ -905,6 +931,7 @@ body{
 
 //HomePage
 .homepage{
+
   form {
     display: flex;
     flex-direction: column;
