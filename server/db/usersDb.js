@@ -1,7 +1,6 @@
 const connection = require('./connection')
 
 // register a new user
-
 function createUser (user, db = connection) {
   console.log(user)
   return userExists(user.user_name, db)
@@ -12,10 +11,6 @@ function createUser (user, db = connection) {
       }
       return null
     })
-    // .then(() => {
-    // generate hash here
-    // return generateHash(user.password)
-    // })
     .then(passwordHash => {
       return db('users').insert({ user_name: user.user_name, hash: passwordHash })
     })
@@ -38,8 +33,6 @@ function getUserByName (userName, db = connection) {
     .where('user_name', userName)
     .first()
 }
-
-
 
 module.exports = {
   createUser,

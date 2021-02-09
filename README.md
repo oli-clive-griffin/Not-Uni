@@ -1,5 +1,7 @@
 # Not-Uni
 
+ http://not-uni.herokuapp.com/ 
+
 ## Getting Started
 
 If you'd like to add to our project here's how to get started:
@@ -92,11 +94,20 @@ We have used dbdiagram.io for our database design. Check it out below.
 
 
 ```javascript
+
+hasLoaded: {
+  authHasLoaded: false,
+  modulesHaveLoaded: false,
+ }
+ 
+isAuthenticated: true
+
 user: {
-  name: str,
+  displayName: str,
+  email: str,
+  uid: str,
   saved:[module_id,module_id],
   created:[module_id,module_id],
-  isAuthenticated: boolean
 }
 
 modules: [
@@ -107,6 +118,7 @@ modules: [
     category: 'JavaScript',
     duration: 15,
     number_of_elements: 5,
+    description: str,
     elements: [
       {
         id: 900000,
@@ -125,6 +137,20 @@ modules: [
     ]
   }
 ]
+
+searchModules:[
+{
+        id: int,
+        title: str
+        user_id: int,
+        catergory: tag, //"javascript"
+        duration: int,
+        description: str,
+        number_of_elements: int,
+        elements: []
+      },
+
+]
     
 ```
 ## Auth
@@ -132,7 +158,7 @@ modules: [
 Helper info: https://medium.com/firebase-developers/how-to-setup-firebase-authentication-with-react-in-5-minutes-maybe-10-bb8bb53e8834
 
 ## Git Protocol
-curtosey of Hortense:
+courtesy of Hortense:
 
 * Clone & Make a branch Steps 1 - 4
 * Merge your feature Steps 5 - 11
@@ -203,7 +229,7 @@ git checkout -b feature/myNextFeature
 code .  
 ```
 
-* Reset datase
+* Reset database
 ```
 rm server/db/dev.sqlite3
 npm run knex migrate:latest

@@ -1,34 +1,52 @@
 import React from 'react'
-import { Link, Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { textSpanIsEmpty } from 'typescript'
 import SavedModules from './SavedModules'
-
+import YourModules from './YourModules'
+import EditProfile from './EditProfile'
+import EditPassword from './EditPassword'
+import EditAvatar from './EditAvatar'
+import Delete from './UserAuth/Delete'
+import { fetchModules } from '../actions'
 class Profile extends React.Component {
   state = {
-    activeModules: null
+    activeModules: '',
+    deleteProfile: false,
   }
-
-  fakeProps = {
-    userName: 'Oli'
+  componentDidMount = () => {
+    this.props.dispatch(fetchModules())
   }
 
   sidebarClickHandler = (whichButton) => {
     this.setState({
       activeModules: whichButton
     })
+    switch(whichButton){
+      case("saved modules"):
+      this.getSavedModules()
+      case("your modules"):
+      this.getYourModules()
+    }
+  }
 
-    this.getSavedModules()
+  getYourModules = () => {
+    const yourModules = this.props.modules.filter((item) => item.user_id == this.props.user.uid)
+    this.setState({yourModules: yourModules})
   }
 
   getSavedModules = () => {
-    const savedIDs = this.props.user.saved
-    const savedModules = this.props.modules.filter((item) => savedIDs.includes(item.id))
+    let id = this.props.savedModules.map(module => module.module_id)
+    let modules = this.props.modules.filter(module => id.includes(module.id))
     this.setState({
-      savedModules: savedModules
-    })
+          savedModules: modules
+        })
   }
 
+  setDelete = (boolean) => {
+    this.setState({
+      deleteProfile:boolean
+    })
+  }
   render() {
     return (
       <>
@@ -36,16 +54,18 @@ class Profile extends React.Component {
           <div className="left column" >
             <div className="profile-options-box">
               <div className="heading">
-                <h1> Welcome {this.fakeProps.userName} </h1>
+                <h1 className='Welcome'> Welcome {this.props.user.userName} </h1>
+                {this.props.user.photoURL && <img className='pokemon' src={this.props.user.photoURL}/>}
               </div>
               <div className="options">
-                <div className="single-option">
+              {this.props.hasLoaded.authHasLoaded && <>{this.props.user && <>
+                <div onClick={() => this.sidebarClickHandler('your modules') }className="single-option">
                   <img src="/images/folder-24px-blue.svg"/>
-                  <span> Your Modules </span>
+                  <span> Your Created Modules </span>
                 </div>
                 <div onClick={() => { this.sidebarClickHandler('saved modules') }} className="single-option">
                   <img src="/images/folder-24px-green.svg"/>
-                  <span> Saved Modules </span>
+                  <span> Your Saved Modules </span>
                 </div>
                 <Link to="/create" >
                   <div className="single-option">
@@ -53,14 +73,23 @@ class Profile extends React.Component {
                     <span> Create A Module </span>
                   </div>
                 </Link>
+                <div onClick={() => this.sidebarClickHandler('edit') }className="single-option">
+                  <img src="/images/edit-24px.svg"/>
+                  <span> Edit Profile </span>
+                </div>
+                </>}</>}
               </div>
             </div>
           </div>
           <div className="middle column" >
+            {this.props.hasLoaded.modulesHaveLoaded && <>
             {this.state.activeModules === "saved modules" && <SavedModules savedModules={this.state.savedModules}/>}
-
-            {/* {this.state.activeModules === "your modules" && <YourModules yourModules={this.state.yourModules}/> */}
-
+            {this.state.activeModules === "your modules" && <YourModules yourModules={this.state.yourModules}/>}
+            {this.state.activeModules === "edit" && <EditProfile props={this.state.user} sidebarClickHandler={this.sidebarClickHandler} setDelete={this.setDelete}/>}
+            {this.state.activeModules === "password" && <EditPassword props={this.state.user} sidebarClickHandler={this.sidebarClickHandler}/>}
+            {this.state.activeModules === "avatar" && <EditAvatar props={this.state.user} sidebarClickHandler={this.sidebarClickHandler}/>}
+            {this.state.deleteProfile === true && <Delete setDelete={this.setDelete} dispatch={this.props.dispatch} history={this.props.history}/>}
+            </> }
           </div>
           <div className="right column" >
           </div>
@@ -72,8 +101,11 @@ class Profile extends React.Component {
 
 function mapStateToProps(globalState) {
   return {
+    dispatch: globalState.dispatch,
     user: globalState.user,
-    modules: globalState.modules
+    modules: globalState.modules,
+    savedModules: globalState.savedModules,
+    hasLoaded: globalState.hasLoaded
   }
 }
 

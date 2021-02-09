@@ -5,14 +5,10 @@ export function getAllModulesAPI () {
     .then(res => res.body)
 }
 
-// export function getModulesBySearchAPI () {
-//   return request.get(rootUrl)
-//     .then(res => res.body)
-// }
-
-export function getSavedModulesAPI () {
-  return request.get('/api/modules/saved')
-    .then(res => res.body)
+export function getSavedModulesAPI (id) {
+  return request.get(`/api/modules/saved/${id}`)
+  .then(res => { 
+    return res.body })
 }
 
 export function createModuleAPI (module) {
@@ -21,12 +17,36 @@ export function createModuleAPI (module) {
     .then(res => res.body)
 }
 
-export function addSavedModuleAPI (user_id, module_id) {
-  const module = {user_id: user_id, module_id: module_id}
-  return request.post('/api/modules/saved').send(module)
+export function updateModuleAPI (updatedModule) {
+
+  updatedModule.number_of_elements = updatedModule.elements.length
+
+  const id = updatedModule.id
+
+  return request.patch('/api/modules/' + id ).send(updatedModule)
+    .then(res => res.body)
+}
+
+export function addSavedModuleAPI (userID, moduleID) {
+  const module = {
+    user_id: userID,
+    module_id: moduleID
+  }
+  return request.post('/api/modules/saved')
+    .send(module)
     .then(res=>res.body)
 }
 
+export function removeSavedModuleAPI (savedModuleID) {
+  return request.delete('/api/modules/saved/' + savedModuleID)
+    
+}
+
+export function deleteModule(moduleToDelID) {
+
+  return request.delete('/api/modules/del/'+ moduleToDelID)
+  .then( response => response.body)
+}
 
 export function increaseLikesAPI(module){
   let updatedModule ={
@@ -40,12 +60,10 @@ export function increaseLikesAPI(module){
     likes: module.likes + 1
   }
   return request
-  .patch('/api/modules/' + updatedModule.id)
+  .patch('/api/modules/likes/' + updatedModule.id)
   .send(updatedModule)
   .then (res => res.body)
 }
-
-
 
 export function decreaseLikesAPI(module){
   console.log(module)
@@ -60,10 +78,21 @@ export function decreaseLikesAPI(module){
     likes: module.likes -1
   }
   return request
-  .patch('/api/modules/' + updatedModule.id)
+  .patch('/api/modules/likes/' + updatedModule.id)
   .send(updatedModule)
   .then (res => res.body)
 }
 
+// Create comment on a module
+export function addCommentAPI (moduleID, comment) {
+  console.log(moduleID);
+  return request.post('/api/comments/' + moduleID).send(comment)
+    .then(res => res.body)
+}
 
-// get created modules API?
+// Get comments on a Module
+
+export function displayCommentsAPi(id) {
+  return request.get('/api/comments/' + id)
+    .then(res => res.body)
+}

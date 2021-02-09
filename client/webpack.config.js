@@ -20,7 +20,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         // NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        apiKey: JSON.stringify(process.env.apiKey),
+        API_KEY: JSON.stringify(process.env.API_KEY),
         authDomain: JSON.stringify(process.env.authDomain),
         databaseURL: JSON.stringify(process.env.databaseURL),
         projectId: JSON.stringify(process.env.projectId),

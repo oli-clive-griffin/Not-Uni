@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setSearchedModules } from '../actions'
 import ModuleCard from './ModuleCard'
-import Search from './Search'
 
 class SearchResults extends React.Component {
+
   componentDidMount () {
     const q = this.props.match.params.q
     const filteredModules = this.props.modules.filter(module => {
@@ -30,30 +30,58 @@ class SearchResults extends React.Component {
     return (
       <div className='results-page'>
 
-        <div className='categories-table'>
-          <div className='title'>
-            <h4>Categories</h4>
-          </div>
-
-          <div className='category'>
-            <Link to={'/categories/results/HTML'}> <img src='/images/icons/html.png'/>HTML</Link>
-          </div>
-          <div className='category'>
-            <Link to={'/categories/results/CSS'}><img src='/images/icons/css.png'/>CSS</Link>
-          </div>
-          <div className='category'>
-            <Link to={'/categories/results/JavaScript'}><img src='/images/icons/javascript.png'/>JavaScript</Link>
-          </div>
-          <div className='category'>
-            <Link to={'/categories/results/Ruby'}><img src='/images/icons/ruby.png'/>Ruby</Link>
-          </div>
-          <div className='category'>
-            <Link to={'/categories/results/Python'}><img src='/images/icons/python.png'/><span>Python</span></Link>
+        <div className="left column"> 
+          <div className='categories-table'>
+            <div className='title'>
+              <h2>Categories</h2>
+            </div>
+            <div className="categories">
+              <Link to={'/categories/results/HTML'}>
+                <div className='single-category'>
+                  <img src='/images/icons/HTML.png'/>
+                  <span> HTML</span> 
+                </div>
+              </Link>
+              <Link to={'/categories/results/CSS'}>
+                <div className='single-category'>
+                  <img src='/images/icons/CSS.png'/>
+                  <span> CSS</span> 
+                </div>
+              </Link>
+              <Link to={'/categories/results/JavaScript'}>
+                <div className='single-category'>
+                  <img src='/images/icons/Javascript.png'/>
+                  <span> JavaScript</span> 
+                </div>
+              </Link>
+              <Link to={'/categories/results/Ruby'}>
+                <div className='single-category'>
+                  <img src='/images/icons/Ruby.png'/>
+                  <span> Ruby</span> 
+                </div>
+              </Link>
+              <Link to={'/categories/results/Python'}>
+                <div className='single-category'>
+                  <img src='/images/icons/Python.png'/>
+                  <span>Python</span>
+                </div>
+              </Link>
+              <Link to={'/categories/results/Csharp'}>
+                <div className='single-category'>
+                  <img src='/images/icons/Csharp.png'/>
+                  <span>C#</span>
+                </div>
+              </Link>
+              <Link to={'/categories/results/C++'}>
+                <div className='single-category'>
+                  <img src='/images/icons/C++.png'/>
+                  <span>C++</span>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
-
         <div className='search-results'>
-
           {this.props.searchModules.length === 0
             ? <>
               <div className='no-matches-message'>

@@ -1,8 +1,14 @@
 const connection = require('./connection')
 
-function getAllModules (db = connection) {
-  return db('modules')
-    .select()
+function getAllModules(db = connection) {
+  return db('modules').select()
+    .then(modules => Promise.all(modules.map(module => {
+      return db('comments_content').where('module_id', module.id)
+        .then(comments => {
+          module.comments = comments
+          return module
+        })
+    })))
 }
 
 function getModuleElements (id, db = connection) {
@@ -26,8 +32,32 @@ function getModulesByUserId (user_id, db = connection) {
 }
 
 
-function updateModule (id, updatedModule, db = connection){
+function updateModuleMeta (moduleID, updatedModuleMeta, db = connection){
+  return db('modules').update(updatedModuleMeta).where('id', moduleID)
+}
+
+function updateElement (element, db = connection) {
+  // console.log(element);
+  return db('module_elements').update(element).where('id', element.id)
+}
+
+function deleteElement (id, db = connection) {
+  console.log(id);
+  return db('module_elements').where('id', id).del()
+}
+
+function updateModule (id, updatedModule, db = connection) {
   return db('modules').update(updatedModule).where('id', id)
+}
+
+function deleteModule (id, db = connection){
+  return db('modules')
+  .where('id', id)
+  .then (() => {
+    return db('modules')
+    .where('id', id)
+    .del()
+  })
 }
 
 module.exports = {
@@ -36,5 +66,9 @@ module.exports = {
   createModuleMeta,
   createModuleElement,
   getModulesByUserId,
-  updateModule
+  updateModuleMeta,
+  updateModule,
+  updateElement,
+  deleteElement,
+  deleteModule
 }

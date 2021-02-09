@@ -1,102 +1,99 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Likes from './Likes'
-
 import { ReactTinyLink } from 'react-tiny-link'
+import { commentsFetched } from '../actions'
+import { fetchModules } from '../actions'
+
+import Comments from './Comments'
+import AddComments from './AddComment'
 
 class Module extends React.Component {
   state = {
     currentModule: null
   }
 
-  // this needs fixing from ross
-  // for some reason i can't figure out how to set state on line 24/26 AFTER global state has loaded in
+  componentDidMount() {
+    this.props.dispatch(fetchModules())
 
-  componentDidMount () {
-    this.setState({ currentModule: null })
+    const currentModuleId = Number(this.props.match.params.id)
+    const currentModule = this.props.modules.find((module) => module.id == currentModuleId)
+    this.setState({ currentModule })
   }
 
-  componentDidUpdate (prevProps) {
-    console.log('update')
-    console.log(this.props.modules.length)
-    if (!prevProps || prevProps.match.params.id !== this.props.match.params.id || prevProps.modules.length !== this.props.modules.length) {
-      console.log('hi')
-      const currentModule = this.props.modules.find((module) => module.id === this.props.match.params.id)
+  componentDidUpdate(prevProps) {
 
-      console.log(currentModule)
+    if (!prevProps || prevProps.match.params.id !== this.props.match.params.id || prevProps.modules.length !== this.props.modules.length || prevProps !== this.props) {
+      // this.props.dispatch(fetchModules())
+
+      const currentModuleId = Number(this.props.match.params.id)
+      const currentModule = this.props.modules.find((module) => module.id === currentModuleId)
       this.setState({ currentModule })
     }
   }
 
-  // Wanted to make the step numbers going up in value @oli need to know more about how your funcation works.
-
-  // const numberonStep = (i)=> {
-  //   for (i = 1, i > numberonStep.content.content, i++ ) {
-  //   }
-  //   return(
-  //   console.log(i)
-  //   )
-  // }
-
-  render () {
+  render() {
     return (
 
-      this.state.currentModule ? <div className = 'module' >
-        {/* <h1>Module View</h1> */}
-
-        <div className='h-module' >
-          <h1> {this.state.currentModule.title} </h1>
-          <h5> {this.state.currentModule.duration} minutes</h5>
-        </div>
-
-        {/* {console.log(this.props.modules)} */}
-        {/* {console.log(this.state.currentModule)} */}
-
-        <div className="B-I-module">
-
-          {this.state.currentModule.elements.map((item) => {
-            switch (item.type) {
-              case 'heading':
-                return <h3> {item.content} </h3>
-
-              case 'paragraph':
-                return <p> {item.content} </p>
-
-              case 'link':
-                return (
-                  <div className="react-tiny-link">
-                    <ReactTinyLink
-                      cardSize="small"
-                      showGraphic={true}
-                      maxLine={2}
-                      minLine={1}
-                      url={item.content}
-                    />
-                  </div>
-                )
-              case 'video':
-                return (
-                  <div className="video-container">
-                    <iframe
-                      height="auto"
-                      src={item.content}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen>
-                    </iframe>
-                  </div>
-                )
-            }
-          })}
-        </div>
-      </div> : ''
+      this.state.currentModule ?
+        <div className='module' >
+          <div className='h-module' >
+            {this.props.hasLoaded.authHasLoaded && <> {this.props.isAuthenticated && <Likes module={this.state.currentModule} />}</>}
+            <h1> {this.state.currentModule.title} </h1>
+            <div id='duration-and-saved'>
+              <h5 id='num-users-saved'> {this.state.currentModule.likes ? this.state.currentModule.likes : 0} Users Have Saved This Module</h5>
+              <h5 id='duration-display'>Duration: Approximately {this.state.currentModule.duration} minutes </h5>
+            </div>
+          </div>
+          <div className="B-I-module">
+            {this.state.currentModule.elements.map((item, i) => {
+              switch (item.type) {
+                case 'heading':
+                  return <h3 key={i}> {item.content} </h3>
+                case 'paragraph':
+                  return <p key={i}> {item.content} </p>
+                case 'link':
+                  return (
+                    <div className="react-tiny-link" key={i}>
+                      {item.content.includes('http') && <ReactTinyLink
+                        cardSize="small"
+                        showGraphic={true}
+                        maxLine={2}
+                        minLine={1}
+                        url={item.content}
+                      />}
+                    </div>
+                  )
+                case 'video':
+                  return (
+                    <div className="video-container" key={i}>
+                      {item.content.includes("embed") ? <iframe
+                        height="auto"
+                        src={item.content}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen>
+                      </iframe> : ""}
+                    </div>
+                  )
+              }
+            })}
+          </div>
+          <div className="comments">
+            <Comments comments={this.state.currentModule.comments} />
+            {this.props.isAuthenticated &&
+              <AddComments moduleID={this.props.match.params.id} />}
+          </div>
+        </div> : ''
     )
   }
 }
 
-function mapStateToProps (globalState) {
+function mapStateToProps(globalState) {
   return {
-    modules: globalState.modules
+    modules: globalState.modules,
+    hasLoaded: globalState.hasLoaded,
+    isAuthenticated: globalState.isAuthenticated
   }
 }
 export default connect(mapStateToProps)(Module)

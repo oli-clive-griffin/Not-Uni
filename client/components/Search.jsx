@@ -5,7 +5,7 @@ import { Redirect } from 'react-router'
 
 class Search extends React.Component {
   state={
-    searchValue: ''
+    searchValue: ' '
   }
 
   handleChange = (event) => {
@@ -15,9 +15,7 @@ class Search extends React.Component {
   }
   
   handleSubmit = (event)=>{
-    console.log("hello")
     this.setState({fireRedirect: false})
-    console.log('handle submit')
     event.preventDefault()
     this.props.history.push('/categories/results/' + this.state.searchValue)
   }

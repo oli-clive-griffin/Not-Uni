@@ -1,10 +1,8 @@
-const { response } = require('express')
 const express = require('express')
 const router = express.Router()
 
 const modulesDb = require('../db/modulesDb')
 const savedModulesDb = require('../db/savedModulesDb')
-const usersDb = require('../db/usersDb')
 
 // GET /api/modules
 router.get('/', (req, res) => {
@@ -42,12 +40,23 @@ router.get('/created', (req, res) => {
   })
 })
 
+// DEL /api/module/del/id
+
+router.delete('/del/:id', (req, res) => {
+  return modulesDb.deleteModule(req.params.id)
+    .then(savedModules => {
+      res.json(savedModules)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({ message: 'Something is broken' })
+    })
+})
 
 //  GET /api/modules/saved
 // shows the logged in person saved modules
-router.get('/saved', (req, res) => {
-  const id = 10001 // hard coded for now
-  return savedModulesDb.getSavedModules(id)
+router.get('/saved/:id', (req, res) => {
+  return savedModulesDb.getSavedModules(req.params.id)
     .then(savedModules => {
       res.json(savedModules)
     })
@@ -62,8 +71,9 @@ router.get('/saved', (req, res) => {
 router.post('/saved', (req, res) => {
   const newSave = req.body
   return savedModulesDb.addSavedModule(newSave)
-  .then((whatever) => {
-    res.json(whatever)
+  .then((id) => {
+    newSave.id = id[0]
+    res.json(newSave)
   })
   .catch(err => {
     console.log(err)
@@ -73,19 +83,19 @@ router.post('/saved', (req, res) => {
 
 // CREATE A MODULE
 router.post('/', (req, res) => {
-  let { title, user_id, category, description, duration, number_of_elements, elements} = req.body
+  let { title, user_id, category, description, difficulty, duration, number_of_elements, elements} = req.body
 
   let moduleMeta = {
     title, 
     user_id, 
     category, 
+    difficulty,
     description,
     duration, 
     number_of_elements
   }
 
   let moduleElements = [...elements]
-  // function to replace 'watch?v=' with 'embed/'
 
   return modulesDb.createModuleMeta(moduleMeta)
     .then(module_id => {
@@ -93,7 +103,7 @@ router.post('/', (req, res) => {
         item.module_id = module_id[0]
         item.order_num = i
         // converts video links to "embed/"
-        if (item.type = 'video'){
+        if (item.type === 'video'){
           let oldURL = item.content
           let newURL = oldURL.replace("watch?v=", "embed/")
           item.content = newURL
@@ -101,6 +111,8 @@ router.post('/', (req, res) => {
       })
 
       moduleElements.map((element) => {
+        console.log(element)
+
         return modulesDb.createModuleElement(element)
           .catch(err => {
             console.log(err)
@@ -115,13 +127,87 @@ router.post('/', (req, res) => {
       console.log(err)
       res.status(500).json({ message: 'Something is broken' })
     })
-  
+})
+
+//Update a module 
+router.patch('/:id',(req,res) =>{
+  const updatedModule = req.body
+  const moduleID = req.params.id
+
+  const updatedModuleMeta = {
+    user_id: updatedModule.user_id,
+    title: updatedModule.title,
+    description: updatedModule.description,
+    duration: updatedModule.duration,
+    category: updatedModule.category,
+    difficulty: updatedModule.difficulty,
+    number_of_elements: updatedModule.number_of_elements,
+  }
+ 
+
+  const updatedElements = updatedModule.elements.map((item, i) => {
+    item.module_id = moduleID
+    item.order_num = i
+    // converts video links to "embed/"
+    if (item.type === 'video'){
+      let oldURL = item.content
+      let newURL = oldURL.replace("watch?v=", "embed/")
+      item.content = newURL
+    }
+    return item
+  })
+
+  const deletedElements = updatedModule.deletedElements
+
+  modulesDb.updateModuleMeta(moduleID, updatedModuleMeta)
+    .then(() => {
+      const elementUpdatePromises = updatedElements.map((element) => {
+        if (element.id) {
+          return modulesDb.updateElement(element)
+        } else {
+          return modulesDb.createModuleElement(element)
+        }
+      })
+
+      return Promise.all(elementUpdatePromises)
+      
+    })
+    .then(() => {
+      const elementDeletePromises = deletedElements.map((id) => {
+        return modulesDb.deleteElement(id)
+      })
+      
+      return Promise.all(elementDeletePromises)
+    })
+    .then(response =>{
+      res.json({response})
+    })
+    .catch((err)=>{
+      console.log(err)
+      res.status(500).json({ message:'something went wrong' })
+    })
 })
 
 
-//Update a module 
+//delete Saved module
+router.delete('/saved/:id', (req,res)=>{
 
-router.patch('/:id',(req,res) =>{
+  const id = req.params.id
+  savedModulesDb.deleteSavedModule(id)
+    .then(module =>{
+      res.json({ module })
+    })
+    .catch((err)=>{
+      console.log(err)
+      res.status(500).json({ message:'something went wrong' })
+    })
+})
+
+
+
+//Update a module's likes
+
+router.patch('/likes/:id',(req,res) =>{
  
   const updatedModule = req.body
   const id = req.params.id

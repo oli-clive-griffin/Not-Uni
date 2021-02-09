@@ -22,10 +22,10 @@ const reducer = (state = initialState, action) => {
       })
 
       return preSavedModuleState
-    case ADD_TO_SAVED_MODULES:
-      let preAddToSavedModuleState = state
-      preAddToSavedModuleState.saved.push(action.module)
-      return preAddToSavedModuleState
+    // case ADD_TO_SAVED_MODULES:
+    //   let preAddToSavedModuleState = state
+    //   preAddToSavedModuleState.saved.push(action.module)
+    //   return preAddToSavedModuleState
 
       default:
         return state

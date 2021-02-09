@@ -2,7 +2,9 @@
 export const SET_USER = 'SET_USER'
 export const IS_AUTHENTICATED = 'IS_AUTHENTICATED'
 export const REMOVE_USER = 'REMOVE_USER'
+export const AUTHENTICATION_HAS_LOADED = 'AUTHENTICATION_HAS_LOADED'
 import { auth } from '../firebase'
+import {fetchSavedModules} from './index'
 
 export const setUser = (user) => {
   return {
@@ -24,26 +26,36 @@ export const isAuthenticated = (boolean) => {
   }
 }
 
-export const  signIn = (email, password, callback) => {
-  console.log('building action')
+export const authIsLoaded = (boolean) => {
+  return {
+    type: AUTHENTICATION_HAS_LOADED,
+    loaded: boolean
+  }
+}
+
+export const  signIn = (email, password, callback, setError) => {
   return dispatch => {
-  console.log("I made it")
   auth.signInWithEmailAndPassword(email, password)
   .then((user) => {
-    console.log("signIn return")
     return user
   })
-  .then(user => dispatch(setUser({
-    // userName: userName,
+  .then(user => {
+    dispatch(setUser({
     uid: user.uid,
-    email: user.email
-  })))
+    email: user.email,
+    photoURL: user.photoURL
+  }))
+  return user
+})
+  .then((user)=> {
+    dispatch(fetchSavedModules(user.user.uid))})
   .then(() => dispatch(isAuthenticated(true)))
+  .then(() => dispatch(authIsLoaded(true)))
   .then(() => {
-    console.log('done')
     callback()
   })
   .catch((error) => {
+    setError(error.message)
     console.log(error.message)
     console.log(error.code)
       return error
@@ -51,37 +63,77 @@ export const  signIn = (email, password, callback) => {
   }
 }
 
-export const register = (userName, email, password, callback) => {
+export const deleteFirebase = (handler) => {
+  return dispatch =>{
+    let user = auth.currentUser
+    user.delete()
+    dispatch(removeUser({}))
+    dispatch(isAuthenticated(null))
+    dispatch(authIsLoaded(false))
+    handler.push('/')
+  }
+}
+
+export const updateFirebase = (userName, email, pokemon, handler) => {
+  return dispatch =>{
+    let photoURL= null
+    if(pokemon != 0){
+       photoURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon}.png`
+    } 
+    let user = auth.currentUser
+    user.updateProfile({
+        email:email,
+        displayName: userName,
+        photoURL: photoURL
+      })
+
+    dispatch(setUser({
+      userName: userName,
+      email: user.email,
+      photoURL: photoURL
+    }))
+    handler('')
+  }
+}
+
+export const updateFirebasePassword = (password, handler) => {
+    let user = auth.currentUser
+    try{
+      user.updatePassword(password)
+    }
+    catch(e){
+      setError(e)
+    }
+    handler('')
+}
+
+export const register = (userName, email, password, callback, setError) => {
   return dispatch => {
-  console.log("I made it")
   auth.createUserWithEmailAndPassword(email, password)
   .then((user) => {
-    console.log("Register return")
     return user
   })
   .then(user => {
+    let num = Math.floor(Math.random() * 898)
     user.user.updateProfile({
-      displayName: userName
+      displayName: userName,
+      photoURL: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${num}.png`
     })
-    return user
-  })
-  .then((user) => {
-    console.log("User")
-    console.log(user)
     return user
   })
   .then(user => dispatch(setUser({
     userName: userName,
     uid: user.uid,
-    email: user.email
+    email: user.email,
+    photoURL: user.photoURL
   }
     )))
   .then(() => dispatch(isAuthenticated(true)))
   .then(() => {
-    console.log('done')
     callback()
   })
   .catch((error) => {
+    setError(error.message)
     console.log(error.message)
     console.log(error.code)
       return error
@@ -90,11 +142,11 @@ export const register = (userName, email, password, callback) => {
 }
 
 export const signOut = () => {
-  console.log("Signing Out")
   return dispatch => {
     auth.signOut()
     .then(() => dispatch(removeUser({})))
     .then(() => dispatch(isAuthenticated(null)))
+    .then(() => dispatch(authIsLoaded(false)))
   }
 }
 
@@ -105,8 +157,8 @@ export const fetchUser = () => {
         dispatch(setUser({
           userName: user.displayName,
           uid: user.uid,
-          email: user.email
-
+          email: user.email,
+          photoURL: user.photoURL
         }
           ))
         dispatch(isAuthenticated(true))
@@ -118,24 +170,27 @@ export const fetchUser = () => {
           ))
         dispatch(isAuthenticated(true))
       } else {
-        
       }
+      dispatch(authIsLoaded(true))
+
     })
   }
 }
 
-export const signInWithOutsideProvider = (provider) => {
+export const signInWithOutsideProvider = (provider, callback) => {
   return dispatch => {
     auth.signInWithPopup(provider)
     .then( result => {
-      console.log(result)
       dispatch(setUser({
-        userName: user.displayName,
-        uid: user.uid,
-        email: user.email
+        userName: result.displayName,
+        uid: result.uid,
+        email: result.email
       }))
     })
     .then(() => dispatch(isAuthenticated(true)))
+    .then(() => {
+      callback()
+    })
     .catch((error) => {
       console.log(error.message)
       console.log(error.code)
@@ -144,3 +199,18 @@ export const signInWithOutsideProvider = (provider) => {
   }
 }
 
+export const resetPassword = (email, callback, setError) => {
+  auth.sendPasswordResetEmail(email)
+  .then((user) => {
+    return user
+  })
+  .then(() => {
+    callback()
+  })
+  .catch((error) => {
+    setError(error.message)
+    console.log(error.message)
+    console.log(error.code)
+      return error
+    })
+}

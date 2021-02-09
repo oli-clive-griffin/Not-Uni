@@ -7,7 +7,7 @@ export default class CategoryCard extends React.Component {
 
   render () {
     return (
-      <div className={this.props.isActive ? 'category-radio selected' : 'category-radio'} onClick={() => this.clickMe(this.props.category)} >
+      <div className={this.props.isActive ? 'radio selected' : 'radio'} onClick={() => this.clickMe(this.props.category)} >
         <img src={`/images/icons/${this.props.category}.png`} />
         <span> {this.props.displayName} </span>
       </div>
