@@ -28,11 +28,18 @@ module.exports = {
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL,
+    pool: { 
+      min: 2, 
+      max: 10 
+    },
     migrations: {
       directory: './migrations',
+      tableName: 'migrations'
     },
     useNullAsDefault: true,
-    seeds: { directory: './seeds' },
-  },
+    seeds: { 
+      directory: './seeds'
+    }
+  }
 
 };
