@@ -18,7 +18,7 @@ function Delete(props) {
     <div className ="popup">
        <div className="popup-inner">
         <h1>Are you sure you want to delete your module?
-          {props.module}
+           {' '+ props.title}
         </h1>
         <button className="button" onClick={() => submit()}>Delete</button>
         <button className="button delete" onClick={() => props.setDelete(false)}>Cancel</button>

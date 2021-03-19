@@ -2,10 +2,8 @@ const connection = require('./connection')
 
 // register a new user
 function createUser (user, db = connection) {
-  console.log(user)
   return userExists(user.user_name, db)
     .then(exists => {
-      console.log('then exists')
       if (exists) {
         throw new Error('User already exists')
       }

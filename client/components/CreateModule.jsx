@@ -11,7 +11,7 @@ class CreateModule extends React.Component {
     user_id: this.props.user.uid,
     description: '',
     category: '',
-    duration: '',
+    duration: 0,
     number_of_elements: '', // this is calculated later
     elements: [],
     deletedElements: []
@@ -33,7 +33,6 @@ class CreateModule extends React.Component {
     if (this.editing) {
       if (!prevProps || prevProps.match.params.id !== this.props.match.params.id || prevProps.modules.length !== this.props.modules.length || prevProps !== this.props) {
 
-        console.log("update if");
 
         const currentModuleId = Number(this.props.match.params.id)
         const currentModule = this.props.modules.find((module) => module.id === currentModuleId)

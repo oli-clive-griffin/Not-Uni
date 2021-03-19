@@ -66,7 +66,6 @@ export function increaseLikesAPI(module){
 }
 
 export function decreaseLikesAPI(module){
-  console.log(module)
   let updatedModule ={
     id: module.id,
     title:module.title,
@@ -85,7 +84,7 @@ export function decreaseLikesAPI(module){
 
 // Create comment on a module
 export function addCommentAPI (moduleID, comment) {
-  console.log(moduleID);
+  (moduleID);
   return request.post('/api/comments/' + moduleID).send(comment)
     .then(res => res.body)
 }
