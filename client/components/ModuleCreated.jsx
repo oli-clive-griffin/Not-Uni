@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 class ModuleCreated extends React.Component {
   render () {
@@ -8,8 +8,8 @@ class ModuleCreated extends React.Component {
         <div className="module-created-card" >
           <img className="module-created-success" src='/images/tick.svg' alt='success'></img>
           <h1>Success!</h1>
-          <span> Your module has been created</span>
-          <Link to="profile"><span> See your created modules</span> </Link>
+          <span> Your Module Has Been Created</span>
+          <Link to="profile"><span> Return To Your Profile</span> </Link>
         </div>
       </div>
     )

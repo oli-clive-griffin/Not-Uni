@@ -64,7 +64,6 @@ class ModuleCard extends React.Component {
         cardColor = ''
     }
 
-   console.log(this.props)
     return (
       <>
         <div className='module-card'>
