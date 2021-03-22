@@ -1,30 +1,56 @@
-const path = require('path')
+// Update with your config settings.
 
 module.exports = {
+
   development: {
     client: 'sqlite3',
     connection: {
-      filename: path.join(__dirname, 'dev.sqlite3')
+      filename: './dev.sqlite3'
+    },
+    migrations: {
+      directory: './server/db/migrations/'
+    },
+    seeds: {
+      directory: './server/db/seeds/'
     },
     useNullAsDefault: true
   },
 
-  test: {
-    client: 'sqlite3',
+  staging: {
+    client: 'postgresql',
     connection: {
-      filename: ':memory:'
+      database: 'my_db',
+      user:     'username',
+      password: 'password'
     },
-    useNullAsDefault: true
+    pool: {
+      min: 2,
+      max: 10
+    },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './server/db/migrations/'
+
+    },
+    seeds: {
+      directory: './server/db/seeds'
+    },
   },
 
   production: {
     client: 'pg',
-    connection: process.env.DATABASE_URL + "?ssl=true",
+    connection: process.env.DATABASE_URL,
+    pool: { 
+      min: 2, 
+      max: 10 
+    },
     migrations: {
-      directory: "./migrations"
+      tableName: 'knex_migrations',
+      directory: './server/db/migrations/'
     },
     seeds: {
-      directory: "./seeds"
+      directory: './server/db/seeds/'
     }
   }
-}
+
+};
