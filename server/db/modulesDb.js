@@ -37,12 +37,10 @@ function updateModuleMeta (moduleID, updatedModuleMeta, db = connection){
 }
 
 function updateElement (element, db = connection) {
-  // console.log(element);
   return db('module_elements').update(element).where('id', element.id)
 }
 
 function deleteElement (id, db = connection) {
-  console.log(id);
   return db('module_elements').where('id', id).del()
 }
 

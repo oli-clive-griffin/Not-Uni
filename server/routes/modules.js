@@ -111,7 +111,6 @@ router.post('/', (req, res) => {
       })
 
       moduleElements.map((element) => {
-        console.log(element)
 
         return modulesDb.createModuleElement(element)
           .catch(err => {
@@ -132,62 +131,17 @@ router.post('/', (req, res) => {
 //Update a module 
 router.patch('/:id',(req,res) =>{
   const updatedModule = req.body
-  const moduleID = req.params.id
+  const id = req.params.id
 
-  const updatedModuleMeta = {
-    user_id: updatedModule.user_id,
-    title: updatedModule.title,
-    description: updatedModule.description,
-    duration: updatedModule.duration,
-    category: updatedModule.category,
-    difficulty: updatedModule.difficulty,
-    number_of_elements: updatedModule.number_of_elements,
-  }
- 
-
-  const updatedElements = updatedModule.elements.map((item, i) => {
-    item.module_id = moduleID
-    item.order_num = i
-    // converts video links to "embed/"
-    if (item.type === 'video'){
-      let oldURL = item.content
-      let newURL = oldURL.replace("watch?v=", "embed/")
-      item.content = newURL
-    }
-    return item
-  })
-
-  const deletedElements = updatedModule.deletedElements
-
-  modulesDb.updateModuleMeta(moduleID, updatedModuleMeta)
-    .then(() => {
-      const elementUpdatePromises = updatedElements.map((element) => {
-        if (element.id) {
-          return modulesDb.updateElement(element)
-        } else {
-          return modulesDb.createModuleElement(element)
-        }
-      })
-
-      return Promise.all(elementUpdatePromises)
-      
-    })
-    .then(() => {
-      const elementDeletePromises = deletedElements.map((id) => {
-        return modulesDb.deleteElement(id)
-      })
-      
-      return Promise.all(elementDeletePromises)
-    })
-    .then(response =>{
-      res.json({response})
+  modulesDb.updateModule(id, updatedModule)
+    .then(updatedItems => {
+      res.json({ updatedItems })
     })
     .catch((err)=>{
       console.log(err)
       res.status(500).json({ message:'something went wrong' })
     })
 })
-
 
 //delete Saved module
 router.delete('/saved/:id', (req,res)=>{

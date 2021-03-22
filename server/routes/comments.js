@@ -26,8 +26,6 @@ router.post('/:id', (req, res) => {
     content,
   }
 
-  console.log(comment);
-
   return commentsDB.addComment(comment)
     .then(response => {
       res.json(response)
