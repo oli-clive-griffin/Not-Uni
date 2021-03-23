@@ -5,23 +5,15 @@ const webpack = require('webpack')
 
 module.exports = {
   mode: 'development',
-  entry: {
-    index: {
-      import: './client/index.js',
-      dependOn: 'shared',
-    },
-    another: {
-      import: './client/styles/index.scss',
-      dependOn: 'shared',
-    },
-    shared: 'lodash',
-  },
+  entry: path.resolve('./client/index.js'),
   output: {
-    path: path.join(__dirname, '..', 'server', 'public'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, '..', 'server', 'public'),
+    filename: '[name].[contenthash].js',
   },
   optimization: {
-    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
