@@ -4,12 +4,25 @@ const Dotenv = require('dotenv-webpack')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: ['./client/index.js', './client/styles/index.scss'],
+  mode: 'development',
+  entry: {
+    index: {
+      import: './client/index.js',
+      dependOn: 'shared',
+    },
+    another: {
+      import: './client/styles/index.scss',
+      dependOn: 'shared',
+    },
+    shared: 'lodash',
+  },
   output: {
     path: path.join(__dirname, '..', 'server', 'public'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
-  mode: 'development',
+  optimization: {
+    runtimeChunk: 'single',
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css',
