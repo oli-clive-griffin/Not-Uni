@@ -14,10 +14,12 @@ module.exports = {
     splitChunks: {
       chunks: 'all',
     },
+    runtimeChunk: 'single',
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css',
+      filename: 'index.scss',
       chunkFilename: '[id].css',
       ignoreOrder: false // Enable to remove warnings about conflicting order
     }),
