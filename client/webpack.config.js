@@ -4,22 +4,15 @@ const Dotenv = require('dotenv-webpack')
 const webpack = require('webpack')
 
 module.exports = {
-  mode: 'development',
-  entry: path.resolve('./client/index.js'),
+  entry: ['./client/index.js', './client/styles/index.scss'],
   output: {
-    path: path.resolve(__dirname, '..', 'server', 'public'),
-    filename: '[name].[contenthash].js',
+    path: path.join(__dirname, '..', 'server', 'public'),
+    filename: 'bundle.js'
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-    runtimeChunk: 'single',
-  },
+  mode: 'development',
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css',
-      filename: 'index.scss',
       chunkFilename: '[id].css',
       ignoreOrder: false // Enable to remove warnings about conflicting order
     }),
