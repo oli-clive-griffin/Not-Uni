@@ -29,11 +29,11 @@ module.exports = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './server/db/migrations/'
+      directory: './migrations/'
 
     },
     seeds: {
-      directory: './server/db/seeds'
+      directory: './seeds'
     },
   },
 
@@ -47,10 +47,10 @@ module.exports = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './server/db/migrations/'
+      directory: './migrations/'
     },
     seeds: {
-      directory: './server/db/seeds/'
+      directory: './db/seeds/'
     }
   }
 
